@@ -25,6 +25,8 @@ def cmd_power(p, state=None):
     if state is None:
         print(p.get_power())
     else:
+        if state == 'toggle':
+            state = 'on' if p.get_power() == 'off' else 'off'
         p.set_power(state)
 
 def cmd_input(p, source, number):
@@ -93,7 +95,7 @@ def make_parser():
     sub.required = True
 
     power = make_command(sub, 'power', cmd_power)
-    power.add_argument('state', nargs='?', choices=('on', 'off'))
+    power.add_argument('state', nargs='?', choices=('on', 'off', 'toggle'))
 
     inpt = make_command(sub, 'input', cmd_input)
     inpt.add_argument('source', nargs='?', choices=projector.SOURCE_TYPES)
