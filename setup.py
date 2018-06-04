@@ -26,7 +26,7 @@ setup(
     packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'pjlink = pypjlink.cli:main',
+            'pjlink = pypjlink.__main__:main',
         ],
     },
     test_suite='pypjlink.tests',
