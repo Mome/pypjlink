@@ -45,25 +45,23 @@ def cmd_mute_state(p):
     print('video:', 'muted' if video else 'unmuted')
     print('audio:', 'muted' if audio else 'unmuted')
 
-def cmd_mute(p, what):
+def cmd_mute(p, what, state):
+    # TODO: toggle just works for video
     if what is None:
         return cmd_mute_state(p)
+    if state in [None, 'toggle']:
+        video, audio = p.get_mute()
+        state = not video
+    elif state == 'on':
+        state = True
+    elif state == 'off':
+        state = False
     what = {
         'video': projector.MUTE_VIDEO,
         'audio': projector.MUTE_AUDIO,
         'all': projector.MUTE_VIDEO | projector.MUTE_AUDIO,
     }[what]
-    p.set_mute(what, True)
-
-def cmd_unmute(p, what):
-    if what is None:
-        return cmd_mute_state(p)
-    what = {
-        'video': projector.MUTE_VIDEO,
-        'audio': projector.MUTE_AUDIO,
-        'all': projector.MUTE_VIDEO | projector.MUTE_AUDIO,
-    }[what]
-    p.set_mute(what, False)
+    p.set_mute(what, state)
 
 def cmd_info(p):
     info = [
@@ -105,9 +103,10 @@ def make_parser():
 
     mute = make_command(sub, 'mute', cmd_mute)
     mute.add_argument('what', nargs='?', choices=('video', 'audio', 'all'))
+    mute.add_argument('state', nargs='?', choices=('on', 'off', 'toggle'))
 
-    unmute = make_command(sub, 'unmute', cmd_unmute)
-    unmute.add_argument('what', nargs='?', choices=('video', 'audio', 'all'))
+    #unmute = make_command(sub, 'unmute', cmd_unmute)
+    #unmute.add_argument('what', nargs='?', choices=('video', 'audio', 'all'))
 
     make_command(sub, 'info', cmd_info)
     make_command(sub, 'lamps', cmd_lamps)
@@ -172,6 +171,8 @@ def main():
     if rv is False:
         print_error('Incorrect password.')
         return
+
+    print('booo', flush=True)
 
     func(proj, **kwargs)
 
